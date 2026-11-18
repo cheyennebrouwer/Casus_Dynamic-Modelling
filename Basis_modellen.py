@@ -17,7 +17,7 @@ class TumorGrowthModels:
     def __init__(self):
         pass
 
-    def exponential(self, t, c, V):
+    def exponential(self, t, r, V):
         """Exponentieel model
 
         Parameters
@@ -27,7 +27,7 @@ class TumorGrowthModels:
         """
         return r ** V
 
-    def gompertz(self, t, c, V, V_max):
+    def gompertz(self, t, r, V, V_max):
         """Gompertz model
 
         Parameters
