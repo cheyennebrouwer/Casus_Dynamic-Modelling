@@ -9,3 +9,18 @@
 # Uitvoer: Verandering van tumorvolume per tijdseenheid
 
 # Argumenten kunnen per model verschillen, gezien niet alle modellen hetzelfde berekenen!!
+
+import math
+
+class TumorGrowthModels:
+    def __init__(self):
+        pass
+
+    def exponential(self, c, V):
+        """Exponentieel model
+        """
+        return c ** V
+
+    def gompertz(self, c, V, V_max):
+        """Gompertz model"""
+        return c * V * math.log(V_max / V)
