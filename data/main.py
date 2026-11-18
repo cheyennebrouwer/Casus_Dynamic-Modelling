@@ -1,4 +1,4 @@
-from dataset import load_data
+from data.dataset import load_data
 
 data = load_data("../datasetFull.csv")
 
