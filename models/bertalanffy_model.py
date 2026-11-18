@@ -1,8 +1,3 @@
-
-
-
-
-
 def bertalanffy_growth(t, V, a, b):
     """
     Calculate the tumor growth rate using the Von Bertalanffy model.
