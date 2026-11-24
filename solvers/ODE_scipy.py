@@ -1,10 +1,9 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 from typing import Any
-from matplotlib import pyplot as plt
 
 
-def solve_ode(model, t_values: np.ndarray, V0: float, method="RK45"):
+def solve_ode(model, t_values, V0: float, method="RK45"):
     """
     Solve an ODE using SciPy.
 
@@ -20,7 +19,10 @@ def solve_ode(model, t_values: np.ndarray, V0: float, method="RK45"):
 
     t_values = np.asarray(t_values, dtype=float)
 
-    if t_values.__sizeof__() < 2:
+    if t_values.ndim != 1:
+        raise ValueError("Time points must be a one-dimensional array.")
+
+    if t_values.shape[0] < 2:
         raise ValueError("At least two time points are required.")
 
     if np.any(np.diff(t_values) <= 0):
@@ -37,12 +39,6 @@ def solve_ode(model, t_values: np.ndarray, V0: float, method="RK45"):
         t_eval=t_values,
         method=method
     )
-
-    # Temporary debugging
-    print(type(solution))
-    print(solution.success)
-    print(solution.message)
-    print(solution.y)
 
     if not solution.success:
         raise RuntimeError(solution.message)
