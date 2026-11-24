@@ -25,12 +25,30 @@ from Comparison.BIC import bic
 
 # Read the data
 def load_data(file_path):
+    """
+    Loads a CSV file into a Pandas DataFrame
+
+    :param file_path: Path to the CSV file
+
+    :return: Pandas DataFrame
+    """
     data = pd.read_csv(file_path)
 
     return data
 
 
 def select_tumor_data(data, id_column, time_column, volume_column, tumor_id):
+    """
+    Selects and sorts the measurements of a specific tumor and collects columns from the dataframe
+
+    :param data: Pandas DataFrame
+    :param id_column: Column containing the tumor IDs
+    :param time_column: Column containing the time points
+    :param volume_column: Column containing the tumor volumes
+    :param tumor_id: Optional entry to analyze a specified tumor ID
+
+    :return: Pandas DataFrame with sorted measurement times and tumor volumes
+    """
     tumor_data = data[data[id_column] == tumor_id]
     tumor_data = tumor_data.sort_values(time_column)
 
@@ -41,6 +59,11 @@ def select_tumor_data(data, id_column, time_column, volume_column, tumor_id):
 
 
 def parse_arguments():
+    """
+    Parses command line arguments for the model comparison
+
+    :return: Dictionary of arguments
+    """
     parser = argparse.ArgumentParser(
         description="Analyze tumor growth models using a CSV dataset"
     )
@@ -85,6 +108,23 @@ optimizers = {
 
 
 def run_comparison(data, id_column, time_column, volume_column, tumor_id=None):
+    """
+    Fits and compares tumor growth models using different solvers and optimizers.
+
+    For each selected tumor, the function optimizes the parameters of each model and calculates the
+    MSE, AICc and BIC.
+
+    :param data: Pandas DataFrame
+    :param id_column: Column containing the tumor IDs
+    :param time_column: Column containing the time points
+    :param volume_column: Column containing the tumor volumes
+    :param tumor_id: Optional entry to analyze a specified tumor ID
+
+    :return: list of dictionaries containing the model, solver, optimizer, optimized parameters,
+             MSE, AICc and BIC for each tumor
+
+    :raises: ValueError, If the specified tumor ID is not found in the dataset
+    """
     results = []
 
     if tumor_id is not None:
@@ -134,6 +174,14 @@ def run_comparison(data, id_column, time_column, volume_column, tumor_id=None):
 
 
 def print_results(results):
+    """
+    Displays the model comparison results as a table in the terminal.
+
+    Parameter values are rounded to 6 decimal places for readability.
+
+    :param results: list of dictionaries containing the model, solver, optimizer, optimized parameters,
+                    MSE, AICc and BIC for each tumor
+    """
     for result in results:
         parameters = result["Parameters"]
 
@@ -147,6 +195,11 @@ def print_results(results):
     ))
 
 def main():
+    """
+    Runs the model comparison from the command line.
+
+    Loads the dataset, executes the model comparison and displays the results in the terminal.
+    """
     args = parse_arguments()
 
     data = load_data(args.file)
