@@ -22,10 +22,12 @@ def calculate_error(model, solver, times, volumes, parameters):
     Returns
     -------
     float, mean squared error between measured and predicted tumor volumes
+           Returns infinity if the simulation produces invalid values or raises
+           a numerical error.
 
     Raises
     ------
-    ValueError: unsupported solver, when a different option is entered than
+    ValueError: if an unsupported solver is passed to the function
     """
     model_copy = TumorGrowthModel(
         model.name,
@@ -37,21 +39,36 @@ def calculate_error(model, solver, times, volumes, parameters):
     V0 = volumes[0]
     dt = 0.1
 
-    if solver == euler_solver:
-        calculated_times, calculated_volumes = solver(
-            model_copy, t_span, V0, dt
-        )
-
-        predicted = np.interp(
-            times, calculated_times, calculated_volumes
-        )
-
-    elif solver == solve_ode:
-        predicted = solver(
-            model_copy, times, V0
-        )
-
-    else:
+    if solver not in (euler_solver, solve_ode):
         raise ValueError("Unsupported solver")
 
-    return mse(volumes, predicted)
+    try:
+        if solver == euler_solver:
+            calculated_times, calculated_volumes = solver(
+                model_copy, t_span, V0, dt
+            )
+
+            predicted = np.interp(
+                times, calculated_times, calculated_volumes
+            )
+
+        elif solver == solve_ode:
+            predicted = solver(
+                model_copy, times, V0
+            )
+
+    except (ValueError, OverflowError, FloatingPointError):
+        return float("inf")
+
+    if not np.all(np.isfinite(predicted)):
+        return float("inf")
+
+    if np.any(predicted <0):
+        return float("inf")
+
+    error = mse(volumes, predicted)
+
+    if not np.isfinite(error):
+        return float("inf")
+
+    return error

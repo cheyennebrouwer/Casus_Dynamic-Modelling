@@ -38,12 +38,6 @@ def solve_ode(model, t_values: np.ndarray, V0: float, method="RK45"):
         method=method
     )
 
-    # Temporary debugging
-    print(type(solution))
-    print(solution.success)
-    print(solution.message)
-    print(solution.y)
-
     if not solution.success:
         raise RuntimeError(solution.message)
 
