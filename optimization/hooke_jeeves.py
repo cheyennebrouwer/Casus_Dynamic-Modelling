@@ -1,6 +1,7 @@
 import numpy as np
 from models.base_model import TumorGrowthModel
 
+
 def mse(measured, predicted):
     """
     Calculates the mean squared error (MSE) between measured and predicted values.
@@ -16,6 +17,7 @@ def mse(measured, predicted):
     """
     differences = measured - predicted
     return np.square(differences).mean()
+
 
 def calculate_error(model, solver, times, volumes, parameters):
     """
@@ -52,6 +54,7 @@ def calculate_error(model, solver, times, volumes, parameters):
     )
 
     return mse(volumes, predicted)
+
 
 def hooke_jeeves(model, solver, times, volumes, step_size=0.1, tolerance=1e-6):
     """
