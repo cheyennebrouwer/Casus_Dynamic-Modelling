@@ -8,11 +8,12 @@ __pycache__/
 # macOS
 .DS_Store
 
-# Virtual environment
-.venv/
-
 .idea/
 
+# Python environments
+.conda/
+venv/
+.venv/
 # Test files
 test_*.py
 *_test.py
