@@ -1,5 +1,3 @@
-# Model1_101, Model1_109, Model2_254, Model4_353
-
 import numpy as np
 
 def aicc(mse, n, k):
