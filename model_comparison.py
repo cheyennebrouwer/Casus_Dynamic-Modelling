@@ -15,6 +15,7 @@ from solvers.euler import euler_solver
 
 # importing optimization
 from optimization.hooke_jeeves import hooke_jeeves
+from optimization.monte_carlo import monte_carlo
 
 # importing model comparison criteria
 from Comparison.AICc import aicc
@@ -76,6 +77,12 @@ solvers = {
     "SciPy": solve_ode
 }
 
+# Creating dictionary for the optimizers
+optimizers = {
+    "Hooke-jeeves": hooke_jeeves,
+    "Monte-Carlo": monte_carlo,
+}
+
 
 def run_comparison(data, id_column, time_column, volume_column, tumor_id=None):
     results = []
@@ -99,29 +106,30 @@ def run_comparison(data, id_column, time_column, volume_column, tumor_id=None):
 
         for model_name, model in models.items():
             for solver_name, solver in solvers.items():
-                best_parameters, best_mse = hooke_jeeves(
-                    model,
-                    solver,
-                    times,
-                    volumes
-                )
+                for optimizer_name, optimizer in optimizers.items():
+                    best_parameters, best_mse = optimizer(
+                        model,
+                        solver,
+                        times,
+                        volumes
+                    )
 
-                n = len(times)
-                k = len(best_parameters)
+                    n = len(times)
+                    k = len(best_parameters)
 
-                aicc_value = aicc(best_mse, n, k)
-                bic_value = bic(best_mse, n, k)
+                    aicc_value = aicc(best_mse, n, k)
+                    bic_value = bic(best_mse, n, k)
 
-                results.append({
-                    "Tumor ID": tumor_id,
-                    "Model": model_name,
-                    "Solver": solver_name,
-                    "Optimizer": "Hooke_Jeeves",
-                    "Parameters": best_parameters,
-                    "MSE": best_mse,
-                    "AICc": aicc_value,
-                    "BIC": bic_value
-                })
+                    results.append({
+                        "Tumor ID": tumor_id,
+                        "Model": model_name,
+                        "Solver": solver_name,
+                        "Optimizer": optimizer_name,
+                        "Parameters": best_parameters,
+                        "MSE": best_mse,
+                        "AICc": aicc_value,
+                        "BIC": bic_value
+                    })
     return results
 
 

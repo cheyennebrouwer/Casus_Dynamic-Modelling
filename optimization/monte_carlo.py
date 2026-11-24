@@ -1,6 +1,15 @@
 import numpy as np
-from optimization.hooke_jeeves import calculate_error
+from metrics.calculate_error import calculate_error
 
+# Dictionary for parameter limits
+parameter_bounds = {
+    "r": (0.001, 1.0),
+    "K": (500, 3000),
+    "a": (0.001, 2.0),
+    "b": (0.001, 1.0),
+    "c": (0.001, 1.0),
+    "V_max": (500, 3000),
+}
 
 def monte_carlo(model, solver, times, volumes, iterations=1000):
 
@@ -11,10 +20,11 @@ def monte_carlo(model, solver, times, volumes, iterations=1000):
 
     for _ in range(iterations):
 
-        new_parameters = {
-            key: np.random.uniform(0.01, 2.0)
-            for key in best_parameters
-        }
+        new_parameters = {}
+
+        for key in best_parameters:
+            lower, upper = parameter_bounds[key]
+            new_parameters[key] = np.random.uniform(lower, upper)
 
         new_mse = calculate_error(
             model, solver, times, volumes, new_parameters
