@@ -1,4 +1,7 @@
-def gompertz(self, t, c, V, V_max):
+import math
+
+
+def gompertz(t, V, c, V_max):
     """Gompertz model
 
     Parameters

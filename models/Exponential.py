@@ -1,4 +1,4 @@
-def exponential(c, V):
+def exponential(t, V, c):
     """Exponentieel model
 
     Parameters
