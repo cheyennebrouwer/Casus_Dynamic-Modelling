@@ -1,5 +1,6 @@
 from metrics.calculate_error import calculate_error
 
+
 def hooke_jeeves(model, solver, times, volumes, step_size=0.1, tolerance=1e-6):
     """
     Optimizes the tumor growth model parameters using the Hooke-Jeeves method by minimizing the mean squared error.

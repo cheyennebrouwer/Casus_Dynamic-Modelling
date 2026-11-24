@@ -1,55 +1,38 @@
 import numpy as np
 from scipy.integrate import solve_ivp
+from typing import Any
+from matplotlib import pyplot as plt
 
 
-def solve_ode(model, t_values, V0, method="RK45"):
+def solve_ode(model, t_values: np.ndarray, V0: float, method="RK45"):
     """
-    Solve a tumor growth differential equation using SciPy.
+    Solve an ODE using SciPy.
 
-    Parameters
-    ----------
-    model : TumorGrowthModel
-        The tumor growth model to solve.
+    Parameters:
+        model: Growth model containing a derivative() method.
+        t_values: Time points.
+        V0: Initial tumor volume.
+        method: Integration method (default RK45).
 
-    t_values : array-like
-        Time points at which the solution is evaluated.
-
-    V0 : float
-        Initial tumor volume.
-
-    method : str
-        Numerical integration method used by SciPy.
-        Default is RK45.
-
-    Returns
-    -------
-    numpy.ndarray
-        Calculated tumor volumes at the requested time points.
+    Returns:
+        Array containing calculated tumor volumes.
     """
 
-    # Convert time values to a NumPy array
     t_values = np.asarray(t_values, dtype=float)
 
-    # Check input
-    if t_values.ndim != 1 or len(t_values) < 2:
+    if t_values.__sizeof__() < 2:
         raise ValueError("At least two time points are required.")
 
-    if not np.all(np.isfinite(t_values)):
-        raise ValueError("Time values must be finite.")
-
     if np.any(np.diff(t_values) <= 0):
-        raise ValueError("Time values must be strictly increasing.")
+        raise ValueError("Time points must be increasing.")
 
-    if V0 < 0:
-        raise ValueError("Initial tumor volume cannot be negative.")
+    if not np.isfinite(V0) or V0 < 0:
+        raise ValueError("V0 must be finite and non-negative.")
 
-    if not np.isfinite(V0):
-        raise ValueError("Initial tumor volume must be finite.")
-
-    # Solve the differential equation
-    solution = solve_ivp(
+# solution: Any helpt pycharm met typeherkenning
+    solution: Any = solve_ivp(
         fun=lambda t, y: [model.derivative(t, y[0])],
-        t_span=(t_values[0], t_values[-1]),
+        t_span=(float(np.min(t_values)), float(np.max(t_values))),
         y0=[V0],
         t_eval=t_values,
         method=method
@@ -61,10 +44,7 @@ def solve_ode(model, t_values, V0, method="RK45"):
     print(solution.message)
     print(solution.y)
 
-    # Check whether the solver was successful
     if not solution.success:
         raise RuntimeError(solution.message)
 
-    # Return the calculated tumor volumes
     return solution.y[0]
-
